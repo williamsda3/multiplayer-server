@@ -1,11 +1,15 @@
 {
-  "name": "your-project-name",
+  "name": "your-app-name",
   "version": "1.0.0",
+  "description": "Your app description",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    // dependencies go here
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "socket.io": "^4.1.3",
+    "body-parser": "^1.19.0"
   }
 }
