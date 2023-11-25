@@ -42,4 +42,4 @@ def determine_game_result(moves):
     return 'result_placeholder'
 
 if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen(('localhost', 5000)), app)
+    eventlet.wsgi.server(eventlet.listen(('0.0.0.0', 5000)), app)
