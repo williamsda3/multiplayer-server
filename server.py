@@ -1,11 +1,23 @@
 import socketio
-import eventlet
+from flask import Flask, render_template
+from gevent import monkey
+from geventwebsocket.handler import WebSocketHandler
+from gunicorn.app.base import BaseApplication
+from werkzeug.serving import run_with_reloader
+
+monkey.patch_all()
 
 sio = socketio.Server(cors_allowed_origins='*')
-app = socketio.WSGIApp(sio)
+app = Flask(__name__)
 
-# Dictionary to store moves from each player
-player_moves = {}
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/socket.io/<path:remaining>')
+def socketio_endpoint(remaining):
+    # Handle Socket.IO requests directly through the Socket.IO server
+    socketio_manage(request.environ, {'/': sio}, request)
 
 @sio.event
 def connect(sid, environ):
@@ -41,5 +53,25 @@ def determine_game_result(moves):
     # This is a placeholder logic; you need to adapt it to your game rules.
     return 'result_placeholder'
 
+class GunicornApp(BaseApplication):
+    def __init__(self, app, options=None):
+        self.options = options or {}
+        self.application = app
+        super().__init__()
+
+    def load_config(self):
+        for key, value in self.options.items():
+            self.cfg.set(key, value)
+
+    def load(self):
+        return self.application
+
 if __name__ == '__main__':
-    eventlet.wsgi.server(eventlet.listen(('0.0.0.0', 5000)), app)
+    options = {
+        'bind': '0.0.0.0:5000',
+        'workers': 1,
+        'worker_class': 'geventwebsocket.gunicorn.workers.GeventWebSocketWorker',
+        'timeout': 3600
+    }
+
+    run_with_reloader(GunicornApp(app, options).run)
