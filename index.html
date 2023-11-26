@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Multiplayer Game</title>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+
+    <script>
+        const socket = io('https://multiplayer-server.onrender.com:');
+
+        // Prompt the player for their move
+        const move = prompt('Enter your move (e.g., "rock", "paper", "scissors"):');
+
+        // Send the move to the server
+        socket.emit('send_move', move);
+
+        // Listen for the server to show the result
+        socket.on('show_result', (data) => {
+            console.log(`Received result: Move: ${data.move}, Result: ${data.result}`);
+        });
+    </script>
+</body>
+</html>
