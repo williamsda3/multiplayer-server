@@ -13,5 +13,9 @@ requests
 eventlet==0.32.0
 dnspython==1.16.0
 gevent-websocket==0.10.1
+websockets==10.0
+fastapi==0.68.0
+uvicorn==0.15.0
+
 
 

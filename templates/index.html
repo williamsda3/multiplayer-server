@@ -6,20 +6,27 @@
     <title>Simple Multiplayer Game</title>
 </head>
 <body>
-    <script src="https://multiplayer-server.onrender.com/socket.io/socket.io.js"></script>
-
     <script>
-        const socket = io('https://multiplayer-server.onrender.com');
+        // Replace 'localhost:8765' with your server address
+        const socket = new WebSocket('ws://localhost:8765');
 
         // Prompt the player for their move
         const move = prompt('Enter your move (e.g., "rock", "paper", "scissors"):');
 
         // Send the move to the server
-        socket.emit('send_move', move);
+        socket.addEventListener('open', () => {
+            socket.send(move);
+        });
 
         // Listen for the server to show the result
-        socket.on('show_result', (data) => {
-            console.log(`Received result: Move: ${data.move}, Result: ${data.result}`);
+        socket.addEventListener('message', (event) => {
+            const result = event.data;
+            console.log(`Received result: ${result}`);
+        });
+
+        // Close the connection when the page is closed
+        window.addEventListener('beforeunload', () => {
+            socket.close();
         });
     </script>
 </body>
